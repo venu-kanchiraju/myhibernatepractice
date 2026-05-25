@@ -34,3 +34,10 @@ public class PracticeApplication {
     }
 
 }
+------------------------------------output:-------------------------------------
+
+Hibernate: create table Department (id integer not null auto_increment, deptName varchar(255), primary key (id)) engine=InnoDB
+Hibernate: create table Employee (id integer not null auto_increment, name varchar(255), dept_id integer, primary key (id)) engine=InnoDB
+Hibernate: alter table Employee add constraint FK8k3xj28l84p1pg87a7t7ffmnw foreign key (dept_id) references Department (id)
+Hibernate: insert into Department (deptName) values (?)
+Hibernate: insert into Employee (dept_id,name) values (?,?)
