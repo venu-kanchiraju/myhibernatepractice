@@ -1,0 +1,42 @@
+package com.hibernate.practice;
+
+import org.hibernate.cfg.Configuration;
+import org.hibernate.SessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class PracticeApplication {
+
+    public static void main(String[] args){
+
+        Configuration cfg=new Configuration();
+        cfg.configure("hibernate.cfg.xml");
+        cfg.addAnnotatedClass(Person.class);
+        cfg.addAnnotatedClass(Passport.class);
+        SessionFactory sessionFactory=cfg.buildSessionFactory();
+        Session session=sessionFactory.openSession();
+        Transaction transaction=session.beginTransaction();
+        Passport passport=new Passport();
+        passport.setBrand("Apple");
+        Person person=new Person();
+        person.setName("venu");
+        person.setPassport(passport);
+        session.persist(person);
+        transaction.commit();
+        session.close();
+        sessionFactory.close();
+
+    }
+
+}
+-------------------------------output:-------------------------------------------
+
+Hibernate: create table Passport (id integer not null auto_increment, brand varchar(255), primary key (id)) engine=InnoDB
+Hibernate: create table Person (id integer not null auto_increment, name varchar(255), password_id integer, primary key (id)) engine=InnoDB
+Hibernate: alter table Person drop index UK5q1cdhmmuumovjooaedns27j0
+Hibernate: alter table Person add constraint UK5q1cdhmmuumovjooaedns27j0 unique (password_id)
+Hibernate: alter table Person add constraint FKrikvgxqjeswqyk1fb2v69wudt foreign key (password_id) references Passport (id)
+Hibernate: insert into Passport (brand) values (?)
+Hibernate: insert into Person (name,password_id) values (?,?)
