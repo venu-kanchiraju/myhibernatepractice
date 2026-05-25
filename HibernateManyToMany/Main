@@ -1,0 +1,55 @@
+package com.hibernate.practice;
+
+import org.hibernate.cfg.Configuration;
+import org.hibernate.SessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@SpringBootApplication
+public class PracticeApplication {
+
+    public static void main(String[] args){
+
+        Configuration cfg=new Configuration();
+        cfg.configure("hibernate.cfg.xml");
+        cfg.addAnnotatedClass(Course.class);
+        cfg.addAnnotatedClass(Student.class);
+        SessionFactory sessionFactory=cfg.buildSessionFactory();
+        Session session=sessionFactory.openSession();
+        Transaction transaction=session.beginTransaction();
+
+       Course course=new Course();
+       course.setCourseName("Java");
+       Course course1=new Course();
+       course1.setCourseName("Hibernate");
+        List<Course>list=new ArrayList<>();
+        list.add(course);
+        list.add(course1);
+       Student student=new Student();
+       student.setName("venu");
+       student.setCourse(list);
+       session.persist(student);
+        transaction.commit();
+        session.close();
+        sessionFactory.close();
+
+    }
+
+}
+
+-----------------------------output:---------------------------------------
+
+Hibernate: create table Course (id integer not null auto_increment, courseName varchar(255), primary key (id)) engine=InnoDB
+Hibernate: create table Student (id integer not null auto_increment, name varchar(255), primary key (id)) engine=InnoDB
+Hibernate: create table student_course (student_id integer not null, course_id integer not null) engine=InnoDB
+Hibernate: alter table student_course add constraint FKtao0ysp4xfmi9dlxc10ku58qq foreign key (course_id) references Course (id)
+Hibernate: alter table student_course add constraint FKpwtumr5ofgydxbuhmvdql4fye foreign key (student_id) references Student (id)
+Hibernate: insert into Student (name) values (?)
+Hibernate: insert into Course (courseName) values (?)
+Hibernate: insert into Course (courseName) values (?)
+Hibernate: insert into student_course (student_id,course_id) values (?,?)
+Hibernate: insert into student_course (student_id,course_id) values (?,?)
